@@ -1,6 +1,7 @@
 ﻿namespace BlockchainNet.Core
 {
     using System;
+    using System.IO;
     using System.Text;
     using System.Linq;
     using System.Net.Http;
@@ -8,7 +9,7 @@
     using System.Collections.Generic;
     using System.Security.Cryptography;
 
-    using Newtonsoft.Json;
+    using ProtoBuf;
 
     public class Blockchain
     {
@@ -87,8 +88,8 @@
                 {
                     try
                     {
-                        var chainResponce = await httpClient.GetStringAsync(new Uri(node, "chain")).ConfigureAwait(false);
-                        var chain = JsonConvert.DeserializeObject<List<Block>>(chainResponce);
+                        var chainResponce = await httpClient.GetStreamAsync(new Uri(node, "chain")).ConfigureAwait(false);
+                        var chain = Serializer.Deserialize<List<Block>>(chainResponce);
 
                         if (chain.Count < currentLength
                             || !IsValidChain(chain))
@@ -153,9 +154,13 @@
         /// <returns>SHA-256 хэш блока</returns>
         private static string Hash(Block block)
         {
-            var blockBytes = Encoding.UTF8.GetBytes(JsonConvert.SerializeObject(block));
-            var sha = SHA256.Create();
-            return Encoding.UTF8.GetString(sha.ComputeHash(blockBytes));
+            using (var stream = new MemoryStream())
+            {
+                Serializer.Serialize(stream, block);
+                var blockBytes = stream.ToArray();
+                var sha = SHA256.Create();
+                return Encoding.UTF8.GetString(sha.ComputeHash(blockBytes));
+            }
         }
         
         /// <returns>Последний блок в цепочке</returns>
