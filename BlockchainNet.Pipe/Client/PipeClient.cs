@@ -11,20 +11,21 @@
     public class PipeClient<T> : ICommunicationClient<T>
     {
         private NamedPipeClientStream _pipeClient;
-        private string serverId;
 
         public PipeClient(string serverId)
         {
-            this.serverId = serverId;
+            ServerId = serverId;
         }
-        
+
+        public string ServerId { get; }
+
         public void Start()
         {
             if (_pipeClient == null)
             {
                 _pipeClient = new NamedPipeClientStream(
                     ".",
-                    serverId,
+                    ServerId,
                     PipeDirection.Out,
                     PipeOptions.Asynchronous);
             }

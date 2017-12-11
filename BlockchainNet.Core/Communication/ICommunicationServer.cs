@@ -5,11 +5,6 @@
     public interface ICommunicationServer<T> : ICommunication
     {
         /// <summary>
-        /// Id сервера
-        /// </summary>
-        string ServerId { get; }
-
-        /// <summary>
         /// Событие, которое вызывается при получении сообщения
         /// </summary>
         event EventHandler<MessageReceivedEventArgs<T>> MessageReceivedEvent;
