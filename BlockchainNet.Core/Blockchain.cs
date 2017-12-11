@@ -98,7 +98,7 @@
                 Serializer.Serialize(stream, block);
                 var blockBytes = stream.ToArray();
                 var sha = SHA256.Create();
-                return Encoding.UTF8.GetString(sha.ComputeHash(blockBytes));
+                return Convert.ToBase64String(sha.ComputeHash(blockBytes));
             }
         }
         
