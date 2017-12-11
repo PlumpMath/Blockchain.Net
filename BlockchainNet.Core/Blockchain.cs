@@ -24,6 +24,8 @@
         /// </summary>
         public IReadOnlyList<Transaction> CurrentTransactions => currentTransactions;
 
+        public event EventHandler<BlockAddedEventArgs> BlockAdded;
+
         public Blockchain()
         {
             chain = new List<Block>();
@@ -71,6 +73,8 @@
             chain.Add(block);
 
             currentTransactions.Clear();
+
+            BlockAdded?.Invoke(this, new BlockAddedEventArgs(block, chain));
 
             return block;
         }
