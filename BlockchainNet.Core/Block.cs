@@ -40,5 +40,11 @@
             Proof = proof;
             PreviousHash = previousHash;
         }
+
+        public override string ToString()
+        {
+            var str = $"Block #{Index} {Date}\r\n";
+            return str = $"Proof = {Proof}; Previous hash = {PreviousHash}";
+        }
     }
 }

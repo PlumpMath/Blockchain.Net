@@ -25,5 +25,10 @@
             Recipient = recipient;
             Amount = amout;
         }
+
+        public override string ToString()
+        {
+            return $"Transaction: {Amount} from {Sender} to {Recipient}";
+        }
     }
 }
