@@ -10,19 +10,25 @@
 
     public class PipeClient<T> : ICommunicationClient<T>
     {
-        private readonly NamedPipeClientStream _pipeClient;
-        
+        private NamedPipeClientStream _pipeClient;
+        private string serverId;
+
         public PipeClient(string serverId)
         {
-            _pipeClient = new NamedPipeClientStream(
-                ".", 
-                serverId, 
-                PipeDirection.Out, 
-                PipeOptions.Asynchronous);
+            this.serverId = serverId;
         }
         
         public void Start()
         {
+            if (_pipeClient == null)
+            {
+                _pipeClient = new NamedPipeClientStream(
+                    ".",
+                    serverId,
+                    PipeDirection.Out,
+                    PipeOptions.Asynchronous);
+            }
+
             _pipeClient.Connect();
         }
         
@@ -36,6 +42,7 @@
             {
                 _pipeClient.Close();
                 _pipeClient.Dispose();
+                _pipeClient = null;
             }
         }
 

@@ -240,5 +240,39 @@ namespace BlockchainNet.Test.Pipe
 
             CollectionAssert.AreEquivalent(sendMessages, recievedMessages, "Send and recieved messages are not equal");
         }
+
+        [TestMethod, Timeout(10000)]
+        public async Task Pipe_Client_SendMessage_RestartedTest()
+        {
+            const string FirstMessage = "First";
+            const string SecondMessage = "Second";
+
+            var message = string.Empty;
+            var autoEvent = new AutoResetEvent(false);
+
+            var server = new PipeServer<string>();
+            server.MessageReceivedEvent += (sender, args) =>
+            {
+                message = args.Message;
+
+                autoEvent.Set();
+            };
+
+            server.Start();
+
+            var client = new PipeClient<string>(server.ServerId);
+            client.Start();
+
+            await client.SendMessageAsync(FirstMessage);
+            autoEvent.WaitOne();
+            Assert.AreEqual(FirstMessage, message, "Message are not equal");
+
+            client.Stop();
+            client.Start();
+
+            await client.SendMessageAsync(SecondMessage);
+            autoEvent.WaitOne();
+            Assert.AreEqual(SecondMessage, message, "Message are not equal");
+        }
     }
 }
