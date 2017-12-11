@@ -19,7 +19,7 @@
         private List<Transaction> transaction;
 
         [ProtoIgnore]
-        public IReadOnlyList<Transaction> Transactions => transaction.AsReadOnly();
+        public IReadOnlyList<Transaction> Transactions => (transaction ?? new List<Transaction>()).AsReadOnly();
 
         [ProtoMember(4)]
         public long Proof { get; }
@@ -36,7 +36,7 @@
         {
             Index = index;
             Date = date;
-            transaction = transactions.ToList();
+            transaction = transactions?.ToList() ?? new List<Transaction>();
             Proof = proof;
             PreviousHash = previousHash;
         }
