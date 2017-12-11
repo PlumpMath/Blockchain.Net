@@ -39,6 +39,11 @@
     public class MessageReceivedEventArgs<T> : EventArgs
     {
         /// <summary>
+        /// Id клиента
+        /// </summary>
+        public string ClientId { get; set; }
+
+        /// <summary>
         /// Полученое сообщение
         /// </summary>
         public T Message { get; set; }

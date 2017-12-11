@@ -1,6 +1,7 @@
 ﻿namespace BlockchainNet.Pipe.Server
 {
     using System;
+    using System.Text;
     using System.IO;
     using System.IO.Pipes;
     using System.Threading.Tasks;
@@ -30,7 +31,7 @@
                 PipeTransmissionMode.Message, 
                 PipeOptions.Asynchronous);
 
-            ServerId = Guid.NewGuid().ToString();
+            ServerId = pipeName;
         }
 
         public event EventHandler<ClientConnectedEventArgs> ClientConnectedEvent;
@@ -39,15 +40,21 @@
 
         public string ServerId { get; }
 
+        private string clientId;
+
         public void Start()
         {
             _pipeServer.WaitForConnectionAsync().ContinueWith(t =>
             {
                 if (!_isStopping)
                 {
+                    var buffer = new byte[2048];
+                    var length = _pipeServer.Read(buffer, 0, buffer.Length);
+                    clientId = Encoding.UTF8.GetString(buffer, 0, length);
+
                     ClientConnectedEvent?.Invoke(
                         this,
-                        new ClientConnectedEventArgs { ClientId = ServerId });
+                        new ClientConnectedEventArgs { ClientId = clientId });
 
                     return ReadAsync(new Package());
                 }
@@ -105,6 +112,7 @@
                         MessageReceivedEvent?.Invoke(this,
                             new MessageReceivedEventArgs<T>
                             {
+                                ClientId = clientId,
                                 Message = message
                             });
                     }
@@ -118,7 +126,7 @@
                     Stop();
                     ClientDisconnectedEvent?.Invoke(
                         this, 
-                        new ClientDisconnectedEventArgs { ClientId = ServerId });
+                        new ClientDisconnectedEventArgs { ClientId = clientId });
                 }
             }
         }

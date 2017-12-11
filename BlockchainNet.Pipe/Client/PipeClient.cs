@@ -2,6 +2,7 @@
 {
     using System.IO;
     using System.IO.Pipes;
+    using System.Text;
     using System.Threading.Tasks;
 
     using BlockchainNet.Core.Communication;
@@ -12,11 +13,13 @@
     {
         private NamedPipeClientStream _pipeClient;
 
-        public PipeClient(string serverId)
+        public PipeClient(string serverId, string clientId = null)
         {
             ServerId = serverId;
+            ClientId = clientId ?? "undefined";
         }
 
+        public string ClientId { get; }
         public string ServerId { get; }
 
         public void Start()
@@ -31,6 +34,9 @@
             }
 
             _pipeClient.Connect();
+
+            var buffer = Encoding.UTF8.GetBytes(ClientId);
+            _pipeClient.Write(buffer, 0, buffer.Length);
         }
         
         public void Stop()
