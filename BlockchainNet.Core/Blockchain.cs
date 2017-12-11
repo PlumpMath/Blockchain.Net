@@ -31,7 +31,7 @@
 
             NewBlock(100, "1");
         }
-
+        
         /// <summary>
         /// Проверка блокчейна
         /// </summary>
@@ -123,6 +123,28 @@
             var blockBytes = Encoding.UTF8.GetBytes($"{lastProof}{proof}");
             var sha = SHA256.Create();
             return Encoding.UTF8.GetString(sha.ComputeHash(blockBytes)).EndsWith("00");
+        }
+
+        public Block Mine()
+        {
+            var lastBlock = LastBlock();
+            var lastProof = lastBlock.Proof;
+            var lastHash = Hash(lastBlock);
+
+            var proof = ProofOfWork(lastProof);
+            
+            return NewBlock(proof, lastHash);
+        }
+
+        public bool TryAddChainIfValid(ICollection<Block> recievedChain)
+        {
+            if (recievedChain.Count >= chain.Count
+                && IsValidChain(recievedChain))
+            {
+                chain = recievedChain.ToList();
+                return true;
+            }
+            return false;
         }
     }
 }
