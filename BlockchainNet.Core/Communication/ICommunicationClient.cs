@@ -5,6 +5,11 @@
     public interface ICommunicationClient<T> : ICommunication
     {
         /// <summary>
+        /// Id сервера для обратной связи
+        /// </summary>
+        string ResponceServerId { get; set; }
+
+        /// <summary>
         /// Асинхронный метод для отправки сообщения
         /// </summary>
         /// <param name="message">Сообщение</param>

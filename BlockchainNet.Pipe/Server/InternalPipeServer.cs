@@ -40,7 +40,7 @@
 
         public string ServerId { get; }
 
-        private string clientId;
+        private string responceClientId;
 
         public void Start()
         {
@@ -50,11 +50,14 @@
                 {
                     var buffer = new byte[2048];
                     var length = _pipeServer.Read(buffer, 0, buffer.Length);
-                    clientId = Encoding.UTF8.GetString(buffer, 0, length);
+                    responceClientId = Encoding.UTF8.GetString(buffer, 0, length);
+
+                    if (responceClientId == "\0")
+                        responceClientId = null;
 
                     ClientConnectedEvent?.Invoke(
                         this,
-                        new ClientConnectedEventArgs { ClientId = clientId });
+                        new ClientConnectedEventArgs { ClientId = responceClientId });
 
                     return ReadAsync(new Package());
                 }
@@ -112,7 +115,7 @@
                         MessageReceivedEvent?.Invoke(this,
                             new MessageReceivedEventArgs<T>
                             {
-                                ClientId = clientId,
+                                ClientId = responceClientId,
                                 Message = message
                             });
                     }
@@ -126,7 +129,7 @@
                     Stop();
                     ClientDisconnectedEvent?.Invoke(
                         this, 
-                        new ClientDisconnectedEventArgs { ClientId = clientId });
+                        new ClientDisconnectedEventArgs { ClientId = responceClientId });
                 }
             }
         }

@@ -13,14 +13,14 @@
     {
         private NamedPipeClientStream _pipeClient;
 
-        public PipeClient(string serverId, string clientId = null)
+        public PipeClient(string serverId)
         {
             ServerId = serverId;
-            ClientId = clientId ?? "undefined";
         }
 
-        public string ClientId { get; }
         public string ServerId { get; }
+
+        public string ResponceServerId { get; set; }
 
         public void Start()
         {
@@ -35,7 +35,7 @@
 
             _pipeClient.Connect();
 
-            var buffer = Encoding.UTF8.GetBytes(ClientId);
+            var buffer = Encoding.UTF8.GetBytes(string.IsNullOrEmpty(ResponceServerId) ? "\0" : ResponceServerId);
             _pipeClient.Write(buffer, 0, buffer.Length);
         }
         

@@ -45,6 +45,59 @@ namespace BlockchainNet.Test.Pipe
         }
 
         [TestMethod, Timeout(5000)]
+        public async Task Pipe_Client_Connect_ResponceServerIdTest()
+        {
+            const string ResponceServerId = "responceServerId";
+
+            var tcs = new TaskCompletionSource<bool>();
+            var id = string.Empty;
+
+            var server = new PipeServer<string>();
+            var client = new PipeClient<string>(server.ServerId)
+            {
+                ResponceServerId = ResponceServerId
+            };
+
+            server.ClientConnectedEvent += (sender, args) =>
+            {
+                id = args.ClientId;
+                tcs.SetResult(true);
+            };
+
+            server.Start();
+            client.Start();
+
+            await tcs.Task;
+
+            Assert.AreEqual(ResponceServerId, id, "Responce server id does not match the correct");
+        }
+
+        [TestMethod, Timeout(5000)]
+        public async Task Pipe_Client_Connect_ResponceServerId_EmptyTest()
+        {
+            const string ResponceServerId = null;
+
+            var tcs = new TaskCompletionSource<bool>();
+            var id = string.Empty;
+
+            var server = new PipeServer<string>();
+            var client = new PipeClient<string>(server.ServerId);
+
+            server.ClientConnectedEvent += (sender, args) =>
+            {
+                id = args.ClientId;
+                tcs.SetResult(true);
+            };
+
+            server.Start();
+            client.Start();
+
+            await tcs.Task;
+
+            Assert.AreEqual(ResponceServerId, id, "Responce server id does not match the correct");
+        }
+
+        [TestMethod, Timeout(5000)]
         public async Task Pipe_Client_DisconnectTest()
         {
             var tcs = new TaskCompletionSource<bool>();

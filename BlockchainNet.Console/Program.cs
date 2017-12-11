@@ -52,7 +52,10 @@
 
             foreach (var process in processes)
             {
-                var node = new PipeClient<List<Block>>(GetPipeIdFromProcessId(process.Id), server.ServerId);
+                var node = new PipeClient<List<Block>>(GetPipeIdFromProcessId(process.Id))
+                {
+                    ResponceServerId = server.ServerId
+                };
                 node.Start();
                 nodes.Add(node);
             }
@@ -117,7 +120,10 @@
         {
             if (nodes.All(c => c.ServerId != e.ClientId))
             {
-                var client = new PipeClient<List<Block>>(e.ClientId, server.ServerId);
+                var client = new PipeClient<List<Block>>(e.ClientId)
+                {
+                    ResponceServerId = server.ServerId
+                };
                 client.Start();
                 nodes.Add(client);
                 Console.WriteLine("Connected: " + e.ClientId);
