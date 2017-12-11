@@ -4,8 +4,6 @@
     using System.IO;
     using System.Text;
     using System.Linq;
-    using System.Net.Http;
-    using System.Threading.Tasks;
     using System.Collections.Generic;
     using System.Security.Cryptography;
 
@@ -15,7 +13,6 @@
     {
         private List<Block> chain;
         private List<Transaction> currentTransactions;
-        private List<Uri> nodes;
 
         /// <summary>
         /// Цепочка блоков, блокчейн
@@ -27,28 +24,12 @@
         /// </summary>
         public IReadOnlyList<Transaction> CurrentTransactions => currentTransactions;
 
-        /// <summary>
-        /// Зарегестрированные соседние узлы
-        /// </summary>
-        public IReadOnlyList<Uri> Nodes => nodes;
-
         public Blockchain()
         {
             chain = new List<Block>();
             currentTransactions = new List<Transaction>();
-            nodes = new List<Uri>();
 
             NewBlock(100, "1");
-        }
-
-        /// <summary>
-        /// Регистирует адрес узла
-        /// </summary>
-        /// <param name="node">Адрес узла</param>
-        public void RegisterNode(Uri node)
-        {
-            if (!nodes.Contains(node))
-                nodes.Add(node);
         }
 
         /// <summary>
@@ -71,48 +52,6 @@
                 prevBlock = block;
             }
             return true;
-        }
-
-        /// <summary>
-        /// Решение конфликтов с другими узлами
-        /// </summary>
-        /// <returns>True если наша цепочка была заменена, False если это нет</returns>
-        public async Task<bool> ResolveConflictsAsync()
-        {
-            var currentLength = chain.Count;
-
-            var httpClient = new HttpClient();
-            var newChain = (await Task
-                .WhenAll(nodes
-                .Select(async node =>
-                {
-                    try
-                    {
-                        var chainResponce = await httpClient.GetStreamAsync(new Uri(node, "chain")).ConfigureAwait(false);
-                        var chain = Serializer.Deserialize<List<Block>>(chainResponce);
-
-                        if (chain.Count < currentLength
-                            || !IsValidChain(chain))
-                            return null;
-
-                        return chain;
-                    }
-                    catch
-                    {
-                        return null;
-                    }
-                }))
-                .ConfigureAwait(false))
-                .Where(chain => chain != null)
-                .OrderBy(chain => chain.Count)
-                .FirstOrDefault();
-            
-            if (newChain != null)
-            {
-                chain = newChain;
-                return true;
-            }
-            return false;
         }
 
         /// <summary>
