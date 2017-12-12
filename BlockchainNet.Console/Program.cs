@@ -4,9 +4,11 @@
     using BlockchainNet.Core.Communication;
     using BlockchainNet.Pipe.Client;
     using BlockchainNet.Pipe.Server;
+
     using System;
     using System.Collections.Generic;
     using System.Diagnostics;
+    using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices;
     using System.Threading.Tasks;
@@ -31,7 +33,7 @@
                 }, true);
 
             nodes = new List<ICommunicationClient<List<Block>>>();
-            blockchain = new Blockchain();
+            blockchain = Blockchain.CreateNew();
 
             var currentProcess = Process.GetCurrentProcess();
             var currentPipeId = GetPipeIdFromProcessId(currentProcess.Id);
@@ -104,6 +106,14 @@
                     case "am":
                         PrintAccountAmount(parts.Skip(1).FirstOrDefault());
                         break;
+                    case "save":
+                    case "sv":
+                        SaveBlockChain(parts.Skip(1).FirstOrDefault());
+                        break;
+                    case "load":
+                    case "ld":
+                        LoadBlockChain(parts.Skip(1).FirstOrDefault());
+                        break;
                 }
             }
 
@@ -152,11 +162,14 @@
         private static void PrintHelp()
         {
             Console.WriteLine("e, exit - close the node");
-            Console.WriteLine("a, add - add new transaction");
+            Console.WriteLine("a, add [recipient] [amount] - add new transaction");
             Console.WriteLine("t, transactions - print current transactions");
             Console.WriteLine("b, blocks - print blockschain");
             Console.WriteLine("m, mine - mine new block");
             Console.WriteLine("s, sync - sync blockchain with neighbor");
+            Console.WriteLine("sv, save [filename] - save blockchain");
+            Console.WriteLine("ld, load [filename] - load blockchain");
+            Console.WriteLine("am, amount [account] - print account amount");
         }
 
         private static void ReadAndAddNewTransaction(string[] parts)
@@ -213,7 +226,47 @@
                 .Select(client => client.SendMessageAsync(blockchain.Chain.ToList())));
             Console.WriteLine("Sync messages sended");
         }
+
+        private static void SaveBlockChain(string fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+                fileName = "chain.protobuf";
+
+            try
+            {
+                blockchain.SaveFile(fileName);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            Console.WriteLine("Blockchain saved to " + fileName);
+        }
         
+        private static void LoadBlockChain(string fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+                fileName = "chain.protobuf";
+
+            if (!File.Exists(fileName))
+            {
+                Console.WriteLine("No file");
+                return;
+            }
+
+            try
+            {
+                blockchain = Blockchain.FromFile(fileName);
+                Console.WriteLine("Blockchain loaded from " + fileName);
+                PrintBlockchain();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
         private static async void CurrentServer_MessageReceivedEvent(object sender, MessageReceivedEventArgs<List<Block>> e)
         {
             var replaced = blockchain.TryAddChainIfValid(e.Message);

@@ -9,31 +9,58 @@
 
     using ProtoBuf;
 
+    [ProtoContract]
     public class Blockchain
     {
+        [ProtoMember(1)]
         private List<Block> chain;
+
+        [ProtoMember(2)]
         private List<Transaction> currentTransactions;
 
         /// <summary>
         /// Цепочка блоков, блокчейн
         /// </summary>
-        public IReadOnlyList<Block> Chain => chain;
+        public IReadOnlyList<Block> Chain => chain ?? new List<Block>();
 
         /// <summary>
         /// Текущие транзакции
         /// </summary>
-        public IReadOnlyList<Transaction> CurrentTransactions => currentTransactions;
+        public IReadOnlyList<Transaction> CurrentTransactions => currentTransactions ?? new List<Transaction>();
 
         public event EventHandler<BlockAddedEventArgs> BlockAdded;
-
-        public Blockchain()
+        
+        private Blockchain()
         {
             chain = new List<Block>();
             currentTransactions = new List<Transaction>();
-
-            NewBlock(100, "1");
         }
-        
+
+        public static Blockchain CreateNew()
+        {
+            var blockchain = new Blockchain();
+            blockchain.NewBlock(100, "1");
+            return blockchain;
+        }
+                
+        public static Blockchain FromFile(string fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+                throw new ArgumentException("File name cannot be null or empty", nameof(fileName));
+
+            using (var file = new FileStream(fileName, FileMode.OpenOrCreate))
+                return Serializer.Deserialize<Blockchain>(file);
+        }
+
+        public void SaveFile(string fileName)
+        {
+            if (string.IsNullOrWhiteSpace(fileName))
+                throw new ArgumentException("File name cannot be null or empty", nameof(fileName));
+
+            using (var file = new FileStream(fileName, FileMode.OpenOrCreate))
+                Serializer.Serialize(file, this);
+        }
+
         /// <summary>
         /// Проверка блокчейна
         /// </summary>
