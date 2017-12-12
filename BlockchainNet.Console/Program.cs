@@ -167,6 +167,12 @@
                 amount = double.TryParse(Console.ReadLine(), out temp) ? temp : 0;
             }
             
+            if (blockchain.GetAccountAmount(account) < amount)
+            {
+                Console.WriteLine("Account amount is not enough");
+                return;
+            }
+
             var index = blockchain.NewTransaction(account, recipient, amount);
             Console.WriteLine($"Transaction added to block #{index}");
         }

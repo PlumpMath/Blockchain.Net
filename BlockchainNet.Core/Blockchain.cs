@@ -128,6 +128,9 @@
         /// <returns>Индекс блока, хранящего добаленную транзакцию</returns>
         public int NewTransaction(string sender, string recipient, double amount)
         {
+            if (GetAccountAmount(sender) < amount)
+                throw new InvalidOperationException("Sender amount is not enough");
+
             var transaction = new Transaction(sender, recipient, amount);
             currentTransactions.Add(transaction);
             return LastBlock().Index + 1;
