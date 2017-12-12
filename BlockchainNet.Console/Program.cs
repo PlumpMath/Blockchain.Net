@@ -148,6 +148,7 @@
             Console.WriteLine("sv, save [filename] - save blockchain");
             Console.WriteLine("ld, load [filename] - load blockchain");
             Console.WriteLine("am, amount [account] - print account amount");
+            Console.WriteLine("sw, switch [account] - change account");
         }
 
         private static void ReadAndAddNewTransaction(string[] parts)
