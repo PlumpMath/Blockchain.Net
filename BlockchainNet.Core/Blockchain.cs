@@ -85,11 +85,38 @@
             if (prevBlock == null)
                 throw new ArgumentException("Blocks chain cannot be empty", nameof(chain));
 
+            var amountDictionary = new Dictionary<string, double>();
+
             foreach (var block in chain.Skip(1))
             {
                 if (block.PreviousHash != Crypto.HashBlockInBase64(prevBlock)
                     || !IsValidProof(prevBlock.Proof, block.Proof))
                     return false;
+
+                foreach (var transaction in block.Transactions)
+                {
+                    if (!string.IsNullOrEmpty(transaction.Sender))
+                    {
+                        if (amountDictionary.ContainsKey(transaction.Sender))
+                        {
+                            amountDictionary[transaction.Sender] -= transaction.Amount;
+                            if (amountDictionary[transaction.Sender] < 0)
+                                return false;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }
+                    if (amountDictionary.ContainsKey(transaction.Recipient))
+                    {
+                        amountDictionary[transaction.Recipient] += transaction.Amount;
+                    }
+                    else
+                    {
+                        amountDictionary.Add(transaction.Recipient, transaction.Amount);
+                    }
+                }
 
                 prevBlock = block;
             }
