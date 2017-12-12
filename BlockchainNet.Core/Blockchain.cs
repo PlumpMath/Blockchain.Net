@@ -153,7 +153,7 @@
         {
             var blockBytes = Encoding.UTF8.GetBytes($"{lastProof}{proof}");
             var sha = SHA256.Create();
-            return Encoding.UTF8.GetString(sha.ComputeHash(blockBytes)).EndsWith("00");
+            return Encoding.UTF8.GetString(sha.ComputeHash(blockBytes)).EndsWith("000");
         }
 
         public Block Mine()
