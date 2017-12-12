@@ -150,5 +150,27 @@
             }
             return false;
         }
+
+        public double GetAccountAmount(string account)
+        {
+            if (string.IsNullOrEmpty(account))
+                throw new ArgumentException("Account cannot be null or empty", nameof(account));
+
+            var amount = 0d;
+            foreach (var block in chain)
+            {
+                foreach (var transaction in block.Transactions)
+                {
+                    if (transaction.Recipient == account)
+                        amount += transaction.Amount;
+                    else if (transaction.Sender == account)
+                        amount -= transaction.Amount;
+                }
+            }
+            if (amount < 0)
+                throw new InvalidDataException("Chain is invalid");
+
+            return amount;
+        }
     }
 }

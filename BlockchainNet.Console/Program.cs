@@ -96,6 +96,10 @@
                     case "h":
                         PrintHelp();
                         break;
+                    case "amount":
+                    case "am":
+                        PrintAccountAmount(parts.Skip(1).FirstOrDefault());
+                        break;
                 }
             }
 
@@ -128,6 +132,17 @@
                 nodes.Add(client);
                 Console.WriteLine("Connected: " + e.ClientId);
             }
+        }
+
+        private static void PrintAccountAmount(string account)
+        {
+            while (string.IsNullOrWhiteSpace(account))
+            {
+                Console.Write("Account: ");
+                account = Console.ReadLine();
+            }
+            var amount = blockchain.GetAccountAmount(account);
+            Console.WriteLine($"{account} has: {amount}");
         }
 
         private static void PrintHelp()
