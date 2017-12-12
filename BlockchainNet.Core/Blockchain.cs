@@ -29,13 +29,13 @@
         public IReadOnlyList<Transaction> CurrentTransactions => currentTransactions ?? new List<Transaction>();
 
         public event EventHandler<BlockAddedEventArgs> BlockAdded;
-        
+
         private Blockchain()
         {
             chain = new List<Block>();
             currentTransactions = new List<Transaction>();
         }
-        
+
         /// <summary>
         /// Создает блокчейн с одним генезис блоком
         /// </summary>
@@ -46,7 +46,7 @@
             blockchain.NewBlock(100, "1");
             return blockchain;
         }
-        
+
         /// <summary>
         /// Читает и создает блокчейн из файла
         /// </summary>
@@ -132,13 +132,13 @@
             currentTransactions.Add(transaction);
             return LastBlock().Index + 1;
         }
-                
+
         /// <returns>Последний блок в цепочке</returns>
         public Block LastBlock()
         {
             return chain.Last();
         }
-        
+
         /// <summary>
         /// Запускает процесс майнинга нового блока
         /// </summary>
@@ -150,7 +150,7 @@
             var lastHash = Crypto.HashBlockInBase64(lastBlock);
 
             var proof = ProofOfWork(lastProof);
-            
+
             return NewBlock(proof, lastHash);
         }
 
@@ -196,7 +196,7 @@
 
             return amount;
         }
-        
+
         private long ProofOfWork(long lastProof)
         {
             var proof = 0L;
@@ -209,7 +209,7 @@
 
         private static bool IsValidProof(long lastProof, long proof)
         {
-            return Crypto.HashString($"{lastProof}{proof}").EndsWith("000");
+            return Crypto.HashString($"{lastProof}{proof}").EndsWith("00");
         }
     }
 }
