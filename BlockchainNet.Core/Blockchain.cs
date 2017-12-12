@@ -2,10 +2,8 @@
 {
     using System;
     using System.IO;
-    using System.Text;
     using System.Linq;
     using System.Collections.Generic;
-    using System.Security.Cryptography;
 
     using ProtoBuf;
 
@@ -87,7 +85,7 @@
 
             foreach (var block in chain.Skip(1))
             {
-                if (block.PreviousHash != Hash(prevBlock)
+                if (block.PreviousHash != Crypto.HashBlockInBase64(prevBlock)
                     || !IsValidProof(prevBlock.Proof, block.Proof))
                     return false;
 
@@ -147,7 +145,7 @@
         {
             var lastBlock = LastBlock();
             var lastProof = lastBlock.Proof;
-            var lastHash = Hash(lastBlock);
+            var lastHash = Crypto.HashBlockInBase64(lastBlock);
 
             var proof = ProofOfWork(lastProof);
             
@@ -197,17 +195,6 @@
             return amount;
         }
         
-        private static string Hash(Block block)
-        {
-            using (var stream = new MemoryStream())
-            {
-                Serializer.Serialize(stream, block);
-                var blockBytes = stream.ToArray();
-                var sha = SHA256.Create();
-                return Convert.ToBase64String(sha.ComputeHash(blockBytes));
-            }
-        }
-
         private long ProofOfWork(long lastProof)
         {
             var proof = 0L;
@@ -220,9 +207,7 @@
 
         private static bool IsValidProof(long lastProof, long proof)
         {
-            var blockBytes = Encoding.UTF8.GetBytes($"{lastProof}{proof}");
-            var sha = SHA256.Create();
-            return Encoding.UTF8.GetString(sha.ComputeHash(blockBytes)).EndsWith("000");
+            return Crypto.HashString($"{lastProof}{proof}").EndsWith("000");
         }
     }
 }
