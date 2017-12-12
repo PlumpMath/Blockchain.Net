@@ -1,4 +1,4 @@
-﻿namespace BlockchainNet.Core
+﻿namespace BlockchainNet.Core.Models
 {
     using System;
     using System.Linq;
