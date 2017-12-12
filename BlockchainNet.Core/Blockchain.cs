@@ -187,7 +187,7 @@
                 {
                     if (transaction.Recipient == account)
                         amount += transaction.Amount;
-                    else if (transaction.Sender == account)
+                    if (transaction.Sender == account)
                         amount -= transaction.Amount;
                 }
             }
