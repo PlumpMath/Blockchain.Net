@@ -4,6 +4,8 @@
     using System.Linq;
     using System.Collections.Generic;
 
+    using BlockchainNet.Core.Models;
+
     public class BlockAddedEventArgs : EventArgs
     {
         public Block AddedBlock { get; }

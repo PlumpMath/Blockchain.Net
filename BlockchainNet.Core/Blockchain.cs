@@ -7,6 +7,8 @@
 
     using ProtoBuf;
 
+    using BlockchainNet.Core.Models;
+
     [ProtoContract]
     public class Blockchain
     {

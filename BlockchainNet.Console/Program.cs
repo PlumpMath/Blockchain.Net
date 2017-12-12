@@ -2,6 +2,7 @@
 {
     using BlockchainNet.Core;
     using BlockchainNet.Core.Communication;
+    using BlockchainNet.Core.Models;
     using BlockchainNet.Pipe.Client;
     using BlockchainNet.Pipe.Server;
 

@@ -2,10 +2,12 @@
 {
     using System;
     using System.IO;
-    using System.Security.Cryptography;
     using System.Text;
+    using System.Security.Cryptography;
 
     using ProtoBuf;
+
+    using BlockchainNet.Core.Models;
 
     public static class Crypto
     {

@@ -5,7 +5,7 @@
 
     using ProtoBuf;
 
-    using BlockchainNet.Core;
+    using BlockchainNet.Core.Models;
 
     using Microsoft.VisualStudio.TestTools.UnitTesting;
 
