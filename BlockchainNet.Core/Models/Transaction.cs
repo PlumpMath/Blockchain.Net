@@ -28,7 +28,7 @@
 
         public override string ToString()
         {
-            return $"Transaction: {Amount} from {Sender} to {Recipient}";
+            return $"Transaction: {Amount} from {(string.IsNullOrEmpty(Sender) ? "mining" : Sender)} to {Recipient}";
         }
     }
 }
