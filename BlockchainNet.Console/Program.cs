@@ -16,9 +16,10 @@
 
     static class Program
     {
-        private static ICommunicationServer<List<Block>> server;
-        private static List<ICommunicationClient<List<Block>>> nodes;
-        private static Blockchain blockchain;
+        private static Communicator communicator;
+        private static Blockchain blockchain => communicator.Blockchain;
+        
+        private static string account;
 
         private delegate bool ConsoleEventDelegate(int eventType);
         [DllImport("kernel32.dll", SetLastError = true)]
@@ -29,42 +30,32 @@
             SetConsoleCtrlHandler(arg =>
                 {
                     if (arg == 2)
-                        server?.Stop();
+                        communicator.Close();
                     return false;
                 }, true);
-
-            nodes = new List<ICommunicationClient<List<Block>>>();
-            blockchain = Blockchain.CreateNew();
-
+            
             var currentProcess = Process.GetCurrentProcess();
             var currentPipeId = GetPipeIdFromProcessId(currentProcess.Id);
             Console.Title = currentPipeId;
 
-            server = new PipeServer<List<Block>>(currentPipeId);
-            server.MessageReceivedEvent += CurrentServer_MessageReceivedEvent;
-            server.Start();
-
-            server.ClientConnectedEvent += Server_ClientConnectedEvent;
-            server.ClientDisconnectedEvent += Server_ClientDisconnectedEvent;
+            communicator = new Communicator(
+                new PipeServer<List<Block>>(currentPipeId),
+                new PipeClientFactory<List<Block>>())
+            {
+                Blockchain = Blockchain.CreateNew()
+            };
 
             var processes = Process
                 .GetProcessesByName(currentProcess.ProcessName)
                 .Where(p => p.Id != currentProcess.Id)
                 .ToArray();
 
-
-            foreach (var process in processes)
-            {
-                var node = new PipeClient<List<Block>>(GetPipeIdFromProcessId(process.Id))
-                {
-                    ResponceServerId = server.ServerId
-                };
-                node.Start();
-                nodes.Add(node);
-            }
-
+            communicator.ConnectTo(processes.Select(p => GetPipeIdFromProcessId(p.Id)));
+            
             if (processes.Length > 0)
                 Console.WriteLine("Connected to: " + string.Join(", ", processes.Select(p => p.Id)));
+
+            AskAndSetAccount();
 
             var active = true;
             while (active)
@@ -115,38 +106,24 @@
                     case "ld":
                         LoadBlockChain(parts.Skip(1).FirstOrDefault());
                         break;
+                    case "switch":
+                    case "sw":
+                        AskAndSetAccount(parts.Skip(1).FirstOrDefault());
+                        break;
                 }
             }
 
-            server.Stop();
-
-            foreach (var client in nodes)
-                client.Stop();
+            communicator.Close();
         }
-
-        private static void Server_ClientDisconnectedEvent(object sender, ClientDisconnectedEventArgs e)
+        
+        private static void AskAndSetAccount(string newAccount = null)
         {
-            var node = nodes.FirstOrDefault(n => n.ServerId == e.ClientId);
-            if (node != null)
+            if (string.IsNullOrWhiteSpace(newAccount))
             {
-                node.Stop();
-                nodes.Remove(node);
-                Console.WriteLine("Disconected: " + e.ClientId);
+                Console.Write("Input account: ");
+                newAccount = Console.ReadLine();
             }
-        }
-
-        private static void Server_ClientConnectedEvent(object sender, ClientConnectedEventArgs e)
-        {
-            if (nodes.All(c => c.ServerId != e.ClientId))
-            {
-                var client = new PipeClient<List<Block>>(e.ClientId)
-                {
-                    ResponceServerId = server.ServerId
-                };
-                client.Start();
-                nodes.Add(client);
-                Console.WriteLine("Connected: " + e.ClientId);
-            }
+            account = newAccount;
         }
 
         private static void PrintAccountAmount(string account)
@@ -189,7 +166,7 @@
                 amount = double.TryParse(Console.ReadLine(), out temp) ? temp : 0;
             }
             
-            var index = blockchain.NewTransaction(server.ServerId, recipient, amount);
+            var index = blockchain.NewTransaction(account, recipient, amount);
             Console.WriteLine($"Transaction added to block #{index}");
         }
 
@@ -222,9 +199,7 @@
 
         private static async void SyncBlockchain()
         {
-            await Task
-                .WhenAll(nodes
-                .Select(client => client.SendMessageAsync(blockchain.Chain.ToList())));
+            await communicator.SyncAsync();
             Console.WriteLine("Sync messages sended");
         }
 
@@ -258,7 +233,7 @@
 
             try
             {
-                blockchain = Blockchain.FromFile(fileName);
+                communicator.Blockchain = Blockchain.FromFile(fileName);
                 Console.WriteLine("Blockchain loaded from " + fileName);
                 PrintBlockchain();
             }
@@ -267,19 +242,7 @@
                 Console.WriteLine(ex.Message);
             }
         }
-
-        private static async void CurrentServer_MessageReceivedEvent(object sender, MessageReceivedEventArgs<List<Block>> e)
-        {
-            var replaced = blockchain.TryAddChainIfValid(e.Message);
-            if (replaced)
-                Console.WriteLine("Blockchain replaced");
-            else
-            {
-                var client = nodes.FirstOrDefault(c => c.ServerId == e.ClientId);
-                await client.SendMessageAsync(blockchain.Chain.ToList());
-            }
-        }
-
+        
         private static string GetPipeIdFromProcessId(int processId)
         {
             return $"Pipe-{processId}";

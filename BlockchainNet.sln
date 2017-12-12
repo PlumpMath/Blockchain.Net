@@ -5,11 +5,13 @@ VisualStudioVersion = 15.0.27130.2003
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlockchainNet.Core", "BlockchainNet.Core\BlockchainNet.Core.csproj", "{E12B3E37-BEC9-487C-BD37-2F4FBB73C327}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockchainNet.Test", "BlockchainNet.Test\BlockchainNet.Test.csproj", "{B8605C60-4CA1-44B6-B2CA-FCA327761FBC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlockchainNet.Test", "BlockchainNet.Test\BlockchainNet.Test.csproj", "{B8605C60-4CA1-44B6-B2CA-FCA327761FBC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockchainNet.Pipe", "BlockchainNet.Pipe\BlockchainNet.Pipe.csproj", "{9C6841D3-4AF4-4C90-A31E-77E02E9EB205}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "BlockchainNet.Pipe", "BlockchainNet.Pipe\BlockchainNet.Pipe.csproj", "{9C6841D3-4AF4-4C90-A31E-77E02E9EB205}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlockchainNet.Console", "BlockchainNet.Console\BlockchainNet.Console.csproj", "{EA1551CD-FD60-448D-9902-AE75EF4EA1CE}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "VIew", "VIew", "{0FF3A697-FD4F-4C24-B82D-E79B821EF19E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -36,6 +38,9 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{EA1551CD-FD60-448D-9902-AE75EF4EA1CE} = {0FF3A697-FD4F-4C24-B82D-E79B821EF19E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {E5054FAE-E246-4085-A010-EF728ACD8629}
