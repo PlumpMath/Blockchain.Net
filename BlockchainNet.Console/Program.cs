@@ -44,17 +44,12 @@
             {
                 Blockchain = Blockchain.CreateNew()
             };
-
-            var processes = Process
+            
+            communicator.ConnectTo(Process
                 .GetProcessesByName(currentProcess.ProcessName)
                 .Where(p => p.Id != currentProcess.Id)
-                .ToArray();
-
-            communicator.ConnectTo(processes.Select(p => GetPipeIdFromProcessId(p.Id)));
+                .Select(p => GetPipeIdFromProcessId(p.Id)));
             
-            if (processes.Length > 0)
-                Console.WriteLine("Connected to: " + string.Join(", ", processes.Select(p => p.Id)));
-
             AskAndSetAccount();
 
             var active = true;
