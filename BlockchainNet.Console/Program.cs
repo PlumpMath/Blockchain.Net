@@ -66,7 +66,11 @@
             var active = true;
             while (active)
             {
-                switch (Console.ReadLine())
+                var parts = Console.ReadLine().Split(' ');
+                if (parts.Length == 0)
+                    continue;
+
+                switch (parts[0])
                 {
                     case "exit":
                     case "e":
@@ -86,7 +90,7 @@
                         break;
                     case "add":
                     case "a":
-                        ReadAndAddNewTransaction();
+                        ReadAndAddNewTransaction(parts.Skip(1).ToArray());
                         break;
                     case "sync":
                     case "s":
@@ -155,14 +159,22 @@
             Console.WriteLine("s, sync - sync blockchain with neighbor");
         }
 
-        private static void ReadAndAddNewTransaction()
+        private static void ReadAndAddNewTransaction(string[] parts)
         {
-            Console.Write("Recipient: ");
-            var recipient = Console.ReadLine();
-
-            Console.Write("Amount: ");
-            var amount = double.TryParse(Console.ReadLine(), out double temp) ? temp : 0;
-
+            var recipient = parts.FirstOrDefault();
+            while (string.IsNullOrEmpty(recipient))
+            {
+                Console.Write("Recipient: ");
+                recipient = Console.ReadLine();
+            }
+            var amount = double.TryParse(parts.Skip(1).FirstOrDefault(), out double temp) ? temp : 0;
+            
+            while (amount <= 0)
+            {
+                Console.Write("Amount: ");
+                amount = double.TryParse(Console.ReadLine(), out temp) ? temp : 0;
+            }
+            
             var index = blockchain.NewTransaction(server.ServerId, recipient, amount);
             Console.WriteLine($"Transaction added to block #{index}");
         }
@@ -182,7 +194,8 @@
             foreach (var block in blockchain.Chain)
             {
                 Console.WriteLine(block.ToString());
-                Console.WriteLine(string.Join("\r\n", block.Transactions));
+                if (block.Transactions.Count > 0)
+                    Console.WriteLine(string.Join("\r\n", block.Transactions));
             }
             Console.WriteLine();
         }
@@ -200,7 +213,7 @@
                 .Select(client => client.SendMessageAsync(blockchain.Chain.ToList())));
             Console.WriteLine("Sync messages sended");
         }
-
+        
         private static async void CurrentServer_MessageReceivedEvent(object sender, MessageReceivedEventArgs<List<Block>> e)
         {
             var replaced = blockchain.TryAddChainIfValid(e.Message);
