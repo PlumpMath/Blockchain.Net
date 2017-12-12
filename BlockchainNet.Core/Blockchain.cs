@@ -35,14 +35,23 @@
             chain = new List<Block>();
             currentTransactions = new List<Transaction>();
         }
-
+        
+        /// <summary>
+        /// Создает блокчейн с одним генезис блоком
+        /// </summary>
+        /// <returns>Созданный блокчейн</returns>
         public static Blockchain CreateNew()
         {
             var blockchain = new Blockchain();
             blockchain.NewBlock(100, "1");
             return blockchain;
         }
-                
+        
+        /// <summary>
+        /// Читает и создает блокчейн из файла
+        /// </summary>
+        /// <param name="fileName">Имя файла</param>
+        /// <returns>Прочитанный блокчейн</returns>
         public static Blockchain FromFile(string fileName)
         {
             if (string.IsNullOrWhiteSpace(fileName))
@@ -52,6 +61,10 @@
                 return Serializer.Deserialize<Blockchain>(file);
         }
 
+        /// <summary>
+        /// Сохраняет текущий блокчейн в файл
+        /// </summary>
+        /// <param name="fileName">Имя файла</param>
         public void SaveFile(string fileName)
         {
             if (string.IsNullOrWhiteSpace(fileName))
@@ -119,43 +132,17 @@
             currentTransactions.Add(transaction);
             return LastBlock().Index + 1;
         }
-        
-        /// <param name="block">Хешируемый блок</param>
-        /// <returns>SHA-256 хэш блока</returns>
-        private static string Hash(Block block)
-        {
-            using (var stream = new MemoryStream())
-            {
-                Serializer.Serialize(stream, block);
-                var blockBytes = stream.ToArray();
-                var sha = SHA256.Create();
-                return Convert.ToBase64String(sha.ComputeHash(blockBytes));
-            }
-        }
-        
+                
         /// <returns>Последний блок в цепочке</returns>
         public Block LastBlock()
         {
             return chain.Last();
         }
-
-        public long ProofOfWork(long lastProof)
-        {
-            var proof = 0L;
-
-            while (!IsValidProof(lastProof, proof))
-                proof++;
-
-            return proof;
-        }
-
-        private static bool IsValidProof(long lastProof, long proof)
-        {
-            var blockBytes = Encoding.UTF8.GetBytes($"{lastProof}{proof}");
-            var sha = SHA256.Create();
-            return Encoding.UTF8.GetString(sha.ComputeHash(blockBytes)).EndsWith("000");
-        }
-
+        
+        /// <summary>
+        /// Запускает процесс майнинга нового блока
+        /// </summary>
+        /// <returns>Новый блок</returns>
         public Block Mine()
         {
             var lastBlock = LastBlock();
@@ -167,6 +154,11 @@
             return NewBlock(proof, lastHash);
         }
 
+        /// <summary>
+        /// Пытается заменить блокчейн
+        /// </summary>
+        /// <param name="recievedChain">Новый блокчейн</param>
+        /// <returns>True, если новый блок валидный и замена успешна, иначе - False</returns>
         public bool TryAddChainIfValid(ICollection<Block> recievedChain)
         {
             if (recievedChain.Count >= chain.Count
@@ -178,6 +170,11 @@
             return false;
         }
 
+        /// <summary>
+        /// Возвращает сумму на счету аккаунта
+        /// </summary>
+        /// <param name="account">Аккаунт</param>
+        /// <returns>Сумма на счету</returns>
         public double GetAccountAmount(string account)
         {
             if (string.IsNullOrEmpty(account))
@@ -198,6 +195,34 @@
                 throw new InvalidDataException("Chain is invalid");
 
             return amount;
+        }
+        
+        private static string Hash(Block block)
+        {
+            using (var stream = new MemoryStream())
+            {
+                Serializer.Serialize(stream, block);
+                var blockBytes = stream.ToArray();
+                var sha = SHA256.Create();
+                return Convert.ToBase64String(sha.ComputeHash(blockBytes));
+            }
+        }
+
+        private long ProofOfWork(long lastProof)
+        {
+            var proof = 0L;
+
+            while (!IsValidProof(lastProof, proof))
+                proof++;
+
+            return proof;
+        }
+
+        private static bool IsValidProof(long lastProof, long proof)
+        {
+            var blockBytes = Encoding.UTF8.GetBytes($"{lastProof}{proof}");
+            var sha = SHA256.Create();
+            return Encoding.UTF8.GetString(sha.ComputeHash(blockBytes)).EndsWith("000");
         }
     }
 }
