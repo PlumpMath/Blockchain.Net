@@ -95,30 +95,7 @@
             }
             return true;
         }
-
-        /// <summary>
-        /// Создает новый Блок и добавляет его к цепочке
-        /// </summary>
-        /// <param name="proof">Доказательство работы</param>
-        /// <param name="previousHash">Хэш предыдущего блока, может быть null</param>
-        /// <returns>Созданный блок</returns>
-        public Block NewBlock(long proof, string previousHash = null)
-        {
-            var block = new Block(
-                chain.Count,
-                DateTime.Now,
-                currentTransactions,
-                proof,
-                previousHash);
-            chain.Add(block);
-
-            currentTransactions.Clear();
-
-            BlockAdded?.Invoke(this, new BlockAddedEventArgs(block, chain));
-
-            return block;
-        }
-
+        
         /// <summary>
         /// Добавляет новую транзакцию к списку транзакций
         /// </summary>
@@ -198,6 +175,23 @@
                 throw new InvalidDataException("Chain is invalid");
 
             return amount;
+        }
+
+        private Block NewBlock(long proof, string previousHash = null)
+        {
+            var block = new Block(
+                chain.Count,
+                DateTime.Now,
+                currentTransactions,
+                proof,
+                previousHash);
+            chain.Add(block);
+
+            currentTransactions.Clear();
+
+            BlockAdded?.Invoke(this, new BlockAddedEventArgs(block, chain));
+
+            return block;
         }
 
         private long ProofOfWork(long lastProof)
