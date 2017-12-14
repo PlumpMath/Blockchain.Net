@@ -11,7 +11,7 @@
         public void Blockchain_MineTest()
         {
             var blockchain = Blockchain.CreateNew();
-            blockchain.NewTransaction("Alice", "Bob", 100);
+            blockchain.NewTransaction("Alice", "Bob", 0);
             var block = blockchain.Mine();
             var isValid = blockchain.IsValidChain(blockchain.Chain);
 

@@ -15,7 +15,7 @@
         [TestMethod]
         public void Block_SerializeDeserializeTest()
         {
-            var transactions = new[] { new Transaction("UserA", "UserB", 999) };
+            var transactions = new[] { new Transaction("UserA", "UserB", 999, DateTime.Now) };
             var block = new Block(0, DateTime.Now, transactions, 123, "h34j34h634g5i4h536oi==");
 
             using (var stream = new MemoryStream())

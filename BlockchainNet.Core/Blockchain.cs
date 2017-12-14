@@ -103,7 +103,7 @@
                             if (amountDictionary[transaction.Sender] < 0)
                                 return false;
                         }
-                        else
+                        else if (transaction.Amount > 0)
                         {
                             return false;
                         }
