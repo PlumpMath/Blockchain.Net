@@ -44,6 +44,7 @@
             this.вывестиСчетToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
             this.сменитьАккаунтToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.создатьБлокToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openFileDialog = new System.Windows.Forms.OpenFileDialog();
             this.saveFileDialog = new System.Windows.Forms.SaveFileDialog();
             this.label2 = new System.Windows.Forms.Label();
@@ -64,12 +65,15 @@
             this.Amount = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Sender = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Recipient = new System.Windows.Forms.DataGridViewTextBoxColumn();
-            this.создатьБлокToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.amountDropDown)).BeginInit();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.blocksDataGridView)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.transactionsDataGridView)).BeginInit();
+            this.groupBox2.SuspendLayout();
+            this.groupBox3.SuspendLayout();
             this.SuspendLayout();
             // 
             // menuStrip1
@@ -178,6 +182,13 @@
             this.сменитьАккаунтToolStripMenuItem.Text = "Сменить аккаунт";
             this.сменитьАккаунтToolStripMenuItem.Click += new System.EventHandler(this.SwithAccountClick);
             // 
+            // создатьБлокToolStripMenuItem
+            // 
+            this.создатьБлокToolStripMenuItem.Name = "создатьБлокToolStripMenuItem";
+            this.создатьБлокToolStripMenuItem.Size = new System.Drawing.Size(113, 24);
+            this.создатьБлокToolStripMenuItem.Text = "Создать блок";
+            this.создатьБлокToolStripMenuItem.Click += new System.EventHandler(this.MineClick);
+            // 
             // openFileDialog
             // 
             this.openFileDialog.FileName = "chain.protobuf";
@@ -264,7 +275,8 @@
             // 
             // blocksDataGridView
             // 
-            this.blocksDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.blocksDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
             this.blocksDataGridView.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.blocksDataGridView.Columns.AddRange(new System.Windows.Forms.DataGridViewColumn[] {
@@ -272,10 +284,10 @@
             this.Date,
             this.Proof,
             this.PreviousHash});
-            this.blocksDataGridView.Location = new System.Drawing.Point(0, 31);
+            this.blocksDataGridView.Location = new System.Drawing.Point(6, 25);
             this.blocksDataGridView.Name = "blocksDataGridView";
             this.blocksDataGridView.RowTemplate.Height = 24;
-            this.blocksDataGridView.Size = new System.Drawing.Size(793, 224);
+            this.blocksDataGridView.Size = new System.Drawing.Size(777, 199);
             this.blocksDataGridView.TabIndex = 5;
             this.blocksDataGridView.SelectionChanged += new System.EventHandler(this.BlocksDataGridViewSelectionChanged);
             // 
@@ -327,10 +339,10 @@
             this.Amount,
             this.Sender,
             this.Recipient});
-            this.transactionsDataGridView.Location = new System.Drawing.Point(0, 261);
+            this.transactionsDataGridView.Location = new System.Drawing.Point(13, 21);
             this.transactionsDataGridView.Name = "transactionsDataGridView";
             this.transactionsDataGridView.RowTemplate.Height = 24;
-            this.transactionsDataGridView.Size = new System.Drawing.Size(1012, 199);
+            this.transactionsDataGridView.Size = new System.Drawing.Size(982, 171);
             this.transactionsDataGridView.TabIndex = 6;
             // 
             // CreateDate
@@ -363,20 +375,38 @@
             this.Recipient.ReadOnly = true;
             this.Recipient.Width = 250;
             // 
-            // создатьБлокToolStripMenuItem
+            // groupBox2
             // 
-            this.создатьБлокToolStripMenuItem.Name = "создатьБлокToolStripMenuItem";
-            this.создатьБлокToolStripMenuItem.Size = new System.Drawing.Size(113, 24);
-            this.создатьБлокToolStripMenuItem.Text = "Создать блок";
-            this.создатьБлокToolStripMenuItem.Click += new System.EventHandler(this.MineClick);
+            this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox2.Controls.Add(this.blocksDataGridView);
+            this.groupBox2.Location = new System.Drawing.Point(6, 31);
+            this.groupBox2.Name = "groupBox2";
+            this.groupBox2.Size = new System.Drawing.Size(789, 224);
+            this.groupBox2.TabIndex = 6;
+            this.groupBox2.TabStop = false;
+            this.groupBox2.Text = "Блоки";
+            // 
+            // groupBox3
+            // 
+            this.groupBox3.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox3.Controls.Add(this.transactionsDataGridView);
+            this.groupBox3.Location = new System.Drawing.Point(6, 261);
+            this.groupBox3.Name = "groupBox3";
+            this.groupBox3.Size = new System.Drawing.Size(1006, 198);
+            this.groupBox3.TabIndex = 7;
+            this.groupBox3.TabStop = false;
+            this.groupBox3.Text = "Текущие трансакции";
             // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1013, 462);
-            this.Controls.Add(this.transactionsDataGridView);
-            this.Controls.Add(this.blocksDataGridView);
+            this.Controls.Add(this.groupBox3);
+            this.Controls.Add(this.groupBox2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.menuStrip1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
@@ -390,6 +420,8 @@
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.blocksDataGridView)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.transactionsDataGridView)).EndInit();
+            this.groupBox2.ResumeLayout(false);
+            this.groupBox3.ResumeLayout(false);
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -431,6 +463,8 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Sender;
         private System.Windows.Forms.DataGridViewTextBoxColumn Recipient;
         private System.Windows.Forms.ToolStripMenuItem создатьБлокToolStripMenuItem;
+        private System.Windows.Forms.GroupBox groupBox2;
+        private System.Windows.Forms.GroupBox groupBox3;
     }
 }
 
