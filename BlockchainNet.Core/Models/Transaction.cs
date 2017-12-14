@@ -1,5 +1,7 @@
 ﻿namespace BlockchainNet.Core.Models
 {
+    using System;
+
     using ProtoBuf;
 
     [ProtoContract]
@@ -14,16 +16,20 @@
         [ProtoMember(3)]
         public double Amount { get; }
 
+        [ProtoMember(4)]
+        public DateTime Date { get; }
+
         private Transaction()
         {
 
         }
 
-        public Transaction(string sender, string recipient, double amout)
+        public Transaction(string sender, string recipient, double amout, DateTime date)
         {
             Sender = sender;
             Recipient = recipient;
             Amount = amout;
+            Date = date;
         }
 
         public override string ToString()

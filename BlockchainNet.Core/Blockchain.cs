@@ -135,7 +135,8 @@
             if (GetAccountAmount(sender) < amount)
                 throw new InvalidOperationException("Sender amount is not enough");
 
-            var transaction = new Transaction(sender, recipient, amount);
+            var date = DateTime.Now;
+            var transaction = new Transaction(sender, recipient, amount, date);
             currentTransactions.Add(transaction);
             return LastBlock().Index + 1;
         }
