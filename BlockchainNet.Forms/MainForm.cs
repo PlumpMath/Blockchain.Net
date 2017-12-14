@@ -45,6 +45,14 @@
 
             UpdateBlocksList();
             UpdateTransactionsList();
+            UpdateUserAmount();
+
+            blockchain.BlockchainReplaced += (s, a) =>
+            {
+                UpdateBlocksList();
+                UpdateTransactionsList();
+                UpdateUserAmount();
+            };
         }
 
         protected override void OnClosing(CancelEventArgs e)
@@ -100,7 +108,16 @@
                 {
                     communicator.Blockchain = blockchain 
                         = Blockchain.FromFile(openFileDialog.FileName);
+
                     UpdateBlocksList();
+                    UpdateTransactionsList();
+                    UpdateUserAmount();
+                    blockchain.BlockchainReplaced += (s, a) =>
+                    {
+                        UpdateBlocksList();
+                        UpdateTransactionsList();
+                        UpdateUserAmount();
+                    };
                 }
                 catch (Exception ex)
                 {
@@ -147,14 +164,18 @@
                 return;
             }
 
+            if (MessageBox.Show("Отправить " + amount + " монет на аккаунт \"" + recipient + "\"", "Подтверждение", MessageBoxButtons.OKCancel) != DialogResult.OK)
+                return;
+
             blockchain.NewTransaction(userAccount, recipient, amount);
 
             UpdateTransactionsList();
+            UpdateUserAmount();
         }
 
         private void UpdateBlocksList()
         {
-
+            blocksDataGridView.Rows.Clear();
             foreach (var block in blockchain.Chain)
             {
                 blocksDataGridView.Rows.Add(new object[]
@@ -169,6 +190,7 @@
 
         private void UpdateTransactionsList(int blockIndex = -1)
         {
+            transactionsDataGridView.Rows.Clear();
             var transactions = blockIndex >= 0
                 ? blockchain.Chain
                     .FirstOrDefault(b => b.Index == blockIndex)?
@@ -187,13 +209,18 @@
             }
         }
 
+        private void UpdateUserAmount()
+        {
+            amountDropDown.Maximum = (decimal)blockchain.GetAccountAmount(userAccount);
+        }
+
         private void BlocksDataGridViewSelectionChanged(object sender, EventArgs e)
         {
-            if (blocksDataGridView.SelectedRows.Count == 0)
+            if (blocksDataGridView.SelectedCells.Count == 0)
                 return;
-            var index = (int)blocksDataGridView.SelectedRows[0].Cells["Index"].Value;
+            var index = blocksDataGridView.Rows[blocksDataGridView.SelectedCells[0].RowIndex].Cells["Index"].Value as int?;
 
-            UpdateTransactionsList(index);
+            UpdateTransactionsList(index ?? -1);
         }
 
         private async void MineClick(object sender, EventArgs e)
@@ -201,6 +228,7 @@
             await Task.Run(() => blockchain.Mine());
             MessageBox.Show("Создание блока завершено");
             UpdateBlocksList();
+            UpdateTransactionsList();
         }
     }
 }

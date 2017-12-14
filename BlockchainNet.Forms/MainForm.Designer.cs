@@ -64,6 +64,7 @@
             this.Amount = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Sender = new System.Windows.Forms.DataGridViewTextBoxColumn();
             this.Recipient = new System.Windows.Forms.DataGridViewTextBoxColumn();
+            this.создатьБлокToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.amountDropDown)).BeginInit();
             this.groupBox1.SuspendLayout();
@@ -77,10 +78,11 @@
             this.menuStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.файлToolStripMenuItem,
             this.синхронизацияToolStripMenuItem,
-            this.аккаунтToolStripMenuItem});
+            this.аккаунтToolStripMenuItem,
+            this.создатьБлокToolStripMenuItem});
             this.menuStrip1.Location = new System.Drawing.Point(0, 0);
             this.menuStrip1.Name = "menuStrip1";
-            this.menuStrip1.Size = new System.Drawing.Size(846, 28);
+            this.menuStrip1.Size = new System.Drawing.Size(1013, 28);
             this.menuStrip1.TabIndex = 0;
             this.menuStrip1.Text = "menuStrip1";
             // 
@@ -226,7 +228,7 @@
             this.groupBox1.Controls.Add(this.label2);
             this.groupBox1.Controls.Add(this.recipTextBox);
             this.groupBox1.Controls.Add(this.label3);
-            this.groupBox1.Location = new System.Drawing.Point(634, 31);
+            this.groupBox1.Location = new System.Drawing.Point(801, 31);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(211, 224);
             this.groupBox1.TabIndex = 4;
@@ -273,7 +275,7 @@
             this.blocksDataGridView.Location = new System.Drawing.Point(0, 31);
             this.blocksDataGridView.Name = "blocksDataGridView";
             this.blocksDataGridView.RowTemplate.Height = 24;
-            this.blocksDataGridView.Size = new System.Drawing.Size(626, 224);
+            this.blocksDataGridView.Size = new System.Drawing.Size(793, 224);
             this.blocksDataGridView.TabIndex = 5;
             this.blocksDataGridView.SelectionChanged += new System.EventHandler(this.BlocksDataGridViewSelectionChanged);
             // 
@@ -314,7 +316,7 @@
             this.PreviousHash.ReadOnly = true;
             this.PreviousHash.Width = 300;
             // 
-            // dataGridView2
+            // transactionsDataGridView
             // 
             this.transactionsDataGridView.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
@@ -326,9 +328,9 @@
             this.Sender,
             this.Recipient});
             this.transactionsDataGridView.Location = new System.Drawing.Point(0, 261);
-            this.transactionsDataGridView.Name = "dataGridView2";
+            this.transactionsDataGridView.Name = "transactionsDataGridView";
             this.transactionsDataGridView.RowTemplate.Height = 24;
-            this.transactionsDataGridView.Size = new System.Drawing.Size(845, 199);
+            this.transactionsDataGridView.Size = new System.Drawing.Size(1012, 199);
             this.transactionsDataGridView.TabIndex = 6;
             // 
             // CreateDate
@@ -361,11 +363,18 @@
             this.Recipient.ReadOnly = true;
             this.Recipient.Width = 250;
             // 
+            // создатьБлокToolStripMenuItem
+            // 
+            this.создатьБлокToolStripMenuItem.Name = "создатьБлокToolStripMenuItem";
+            this.создатьБлокToolStripMenuItem.Size = new System.Drawing.Size(113, 24);
+            this.создатьБлокToolStripMenuItem.Text = "Создать блок";
+            this.создатьБлокToolStripMenuItem.Click += new System.EventHandler(this.MineClick);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(846, 462);
+            this.ClientSize = new System.Drawing.Size(1013, 462);
             this.Controls.Add(this.transactionsDataGridView);
             this.Controls.Add(this.blocksDataGridView);
             this.Controls.Add(this.groupBox1);
@@ -421,6 +430,7 @@
         private System.Windows.Forms.DataGridViewTextBoxColumn Amount;
         private System.Windows.Forms.DataGridViewTextBoxColumn Sender;
         private System.Windows.Forms.DataGridViewTextBoxColumn Recipient;
+        private System.Windows.Forms.ToolStripMenuItem создатьБлокToolStripMenuItem;
     }
 }
 

@@ -7,7 +7,7 @@
     <ProjectGuid>{580DA55A-A5EE-46DD-B096-A4C1B10870CB}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>BlockchainNet.Forms</RootNamespace>
-    <AssemblyName>BlockchainNet.Forms</AssemblyName>
+    <AssemblyName>BlockchainNet</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
