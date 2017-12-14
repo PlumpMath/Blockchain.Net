@@ -3,12 +3,12 @@
     using BlockchainNet.Core;
     using BlockchainNet.Core.Communication;
     using BlockchainNet.Core.Models;
+    using BlockchainNet.Pipe;
     using BlockchainNet.Pipe.Client;
     using BlockchainNet.Pipe.Server;
 
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.IO;
     using System.Linq;
     using System.Runtime.InteropServices;
@@ -34,8 +34,7 @@
                     return false;
                 }, true);
             
-            var currentProcess = Process.GetCurrentProcess();
-            var currentPipeId = GetPipeIdFromProcessId(currentProcess.Id);
+            var currentPipeId = ProcessPipeHelper.GetCurrentPipeId();
             Console.Title = currentPipeId;
 
             communicator = new Communicator(
@@ -45,10 +44,7 @@
                 Blockchain = Blockchain.CreateNew()
             };
             
-            communicator.ConnectTo(Process
-                .GetProcessesByName(currentProcess.ProcessName)
-                .Where(p => p.Id != currentProcess.Id)
-                .Select(p => GetPipeIdFromProcessId(p.Id)));
+            communicator.ConnectTo(ProcessPipeHelper.GetNeighborPipesIds());
             
             AskAndSetAccount();
 
