@@ -42,6 +42,9 @@
         
         public void Stop()
         {
+            if (_pipeClient == null)
+                return;
+
             try
             {
                 _pipeClient.WaitForPipeDrain();
