@@ -27,11 +27,22 @@
         [ProtoMember(5)]
         public string PreviousHash { get; }
 
+        /// <summary>
+        /// Приватные конструктор для сериализации
+        /// </summary>
         private Block()
         {
 
         }
 
+        /// <summary>
+        /// Конструктор блока
+        /// </summary>
+        /// <param name="index">Индекс блока</param>
+        /// <param name="date">Дата создания</param>
+        /// <param name="transactions">Транзакции</param>
+        /// <param name="proof">Доказательство доберия блоку</param>
+        /// <param name="previousHash">Хэш предыдущего блока</param>
         public Block(int index, DateTime date, IEnumerable<Transaction> transactions, long proof, string previousHash)
         {
             Index = index;

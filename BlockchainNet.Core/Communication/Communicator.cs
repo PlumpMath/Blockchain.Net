@@ -5,6 +5,7 @@
     using System.Collections.Generic;
 
     using BlockchainNet.Core.Models;
+    using System;
 
     public class Communicator
     {
@@ -15,6 +16,11 @@
 
         public Blockchain Blockchain { get; set; }
 
+        /// <summary>
+        /// Конструктор коммуникатора
+        /// </summary>
+        /// <param name="server">Сервер</param>
+        /// <param name="clientFactory">Фаблика клиентов</param>
         public Communicator(
             ICommunicationServer<List<Block>> server,
             ICommunicationClientFactory<List<Block>> clientFactory)
@@ -32,6 +38,9 @@
         
         public Task SyncAsync(bool onlyGet = false)
         {
+            if (Blockchain == null)
+                throw new InvalidOperationException("Blockchain must be setted");
+
             var sendedList = onlyGet
                 ? new List<Block>()
                 : Blockchain.Chain.ToList();
@@ -82,7 +91,12 @@
 
         private async void Server_MessageReceivedEvent(object sender, MessageReceivedEventArgs<List<Block>> e)
         {
+            if (Blockchain == null)
+                throw new InvalidOperationException("Blockchain must be setted");
+
             var replaced = Blockchain.TryAddChainIfValid(e.Message);
+            // Если не заменено, то входящяя цепочка или невалидна, или меньше существующей
+            // Есть смысл отправить отправителю свою цепочку для замены
             if (!replaced)
             {
                 var nodeClient = nodes.FirstOrDefault(c => c.ServerId == e.ClientId);

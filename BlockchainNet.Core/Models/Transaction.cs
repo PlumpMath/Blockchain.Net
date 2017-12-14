@@ -19,11 +19,21 @@
         [ProtoMember(4)]
         public DateTime Date { get; }
 
+        /// <summary>
+        /// Приватный конструктор для сериализации
+        /// </summary>
         private Transaction()
         {
 
         }
 
+        /// <summary>
+        /// Конструктор транзацкии
+        /// </summary>
+        /// <param name="sender">Отправитель</param>
+        /// <param name="recipient">Получатель</param>
+        /// <param name="amout">Сумма</param>
+        /// <param name="date">Дата создания</param>
         public Transaction(string sender, string recipient, double amout, DateTime date)
         {
             Sender = sender;

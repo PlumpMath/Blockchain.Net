@@ -48,6 +48,8 @@
             {
                 if (!_isStopping)
                 {
+                    // сразу читаем id сервера для обратной связи
+                    // он пригодится для передачи в обработчики событий
                     var buffer = new byte[2048];
                     var length = _pipeServer.Read(buffer, 0, buffer.Length);
                     responceClientId = Encoding.UTF8.GetString(buffer, 0, length);
@@ -85,6 +87,8 @@
 
         private async Task ReadAsync(Package package)
         {
+            // побуферно читаем сообщения, что позволяет не ограничиваться его размером
+
             var readBytes = await _pipeServer.ReadAsync(package.Buffer, 0, package.Buffer.Length);
 
             if (readBytes > 0)
@@ -102,8 +106,10 @@
 
                 package.Result.AddRange(result);
 
+                // если не дочитали...
                 if (!_pipeServer.IsMessageComplete)
                 {
+                    // ...то читаем следующий буфер
                     await ReadAsync(package);
                 }
                 else
@@ -122,6 +128,7 @@
                     await ReadAsync(new Package());
                 }
             }
+            // Если прочитано 0 байт, то клиент вероятно отключился
             else
             {
                 if (!_isStopping)

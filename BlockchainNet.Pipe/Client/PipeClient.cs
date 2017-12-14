@@ -35,6 +35,7 @@
 
             _pipeClient.Connect();
 
+            // Сразу отправляем Id сервера для обратной связи
             var buffer = Encoding.UTF8.GetBytes(string.IsNullOrEmpty(ResponceServerId) ? "\0" : ResponceServerId);
             _pipeClient.Write(buffer, 0, buffer.Length);
         }
