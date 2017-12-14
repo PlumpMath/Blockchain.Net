@@ -142,7 +142,7 @@
             currentTransactions.Add(transaction);
             return LastBlock().Index + 1;
         }
-
+        
         /// <returns>Последний блок в цепочке</returns>
         public Block LastBlock()
         {
@@ -153,14 +153,18 @@
         /// Запускает процесс майнинга нового блока
         /// </summary>
         /// <returns>Новый блок</returns>
-        public Block Mine()
+        public Block Mine(string minerAccount)
         {
             var lastBlock = LastBlock();
             var lastProof = lastBlock.Proof;
             var lastHash = Crypto.HashBlockInBase64(lastBlock);
 
             var proof = ProofOfWork(lastProof);
-
+            
+            // Оплата за майнинг
+            var transaction = new Transaction(null, minerAccount, 1, DateTime.Now);
+            currentTransactions.Add(transaction);
+            
             return NewBlock(proof, lastHash);
         }
 

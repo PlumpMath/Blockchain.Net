@@ -172,7 +172,7 @@
         {
             return Task.Run(() =>
             {
-                var block = blockchain.Mine();
+                var block = blockchain.Mine(account);
                 Console.WriteLine(block.ToString());
             });
         }

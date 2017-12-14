@@ -225,7 +225,7 @@
 
         private async void MineClick(object sender, EventArgs e)
         {
-            await Task.Run(() => blockchain.Mine());
+            await Task.Run(() => blockchain.Mine(userAccount));
             MessageBox.Show("Создание блока завершено");
             UpdateBlocksList();
             UpdateTransactionsList();
