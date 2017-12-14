@@ -30,6 +30,8 @@
 
         public event EventHandler<BlockAddedEventArgs> BlockAdded;
 
+        public event EventHandler BlockchainReplaced;
+
         private Blockchain()
         {
             chain = new List<Block>();
@@ -167,12 +169,13 @@
         /// </summary>
         /// <param name="recievedChain">Новый блокчейн</param>
         /// <returns>True, если новый блок валидный и замена успешна, иначе - False</returns>
-        public bool TryAddChainIfValid(ICollection<Block> recievedChain)
+        public bool TrySetChainIfValid(ICollection<Block> recievedChain)
         {
             if (recievedChain.Count >= chain.Count
                 && IsValidChain(recievedChain))
             {
                 chain = recievedChain.ToList();
+                BlockchainReplaced?.Invoke(this, EventArgs.Empty);
                 return true;
             }
             return false;

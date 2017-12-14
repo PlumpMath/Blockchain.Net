@@ -94,7 +94,7 @@
             if (Blockchain == null)
                 throw new InvalidOperationException("Blockchain must be setted");
 
-            var replaced = Blockchain.TryAddChainIfValid(e.Message);
+            var replaced = Blockchain.TrySetChainIfValid(e.Message);
             // Если не заменено, то входящяя цепочка или невалидна, или меньше существующей
             // Есть смысл отправить отправителю свою цепочку для замены
             if (!replaced)
