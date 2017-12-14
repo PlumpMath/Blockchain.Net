@@ -30,11 +30,14 @@
             server.Start();
         }
         
-        public Task SyncAsync()
+        public Task SyncAsync(bool onlyGet = false)
         {
+            var sendedList = onlyGet
+                ? new List<Block>()
+                : Blockchain.Chain.ToList();
             return Task
                 .WhenAll(nodes
-                .Select(node => node.SendMessageAsync(Blockchain.Chain.ToList())));
+                .Select(node => node.SendMessageAsync(sendedList)));
         }
 
         public void ConnectTo(IEnumerable<string> serversId)
