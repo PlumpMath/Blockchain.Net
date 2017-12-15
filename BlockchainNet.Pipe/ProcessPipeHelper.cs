@@ -26,7 +26,7 @@
 
             var currentProcess = Process.GetCurrentProcess();
             var processName = currentProcess.ProcessName.Replace(".vshost", "");
-            var processNameVsHosted = currentProcess.ProcessName + ".vshost";
+            var processNameVsHosted = processName + ".vshost";
 
             return Process
                 .GetProcessesByName(processName)
