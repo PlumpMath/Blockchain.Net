@@ -56,7 +56,7 @@
         
         private void StartNamedPipeServer()
         {
-            // Есть смысл создавать свой PipeServer для каждого клиента, но при этом основываясь на одном его имени
+            // Есть смысл создавать свой InternalPipeServer для каждого клиента, но при этом основываясь на одном его имени
             // Это позволяет независимо читать данные с множества клиентов
             var server = new InternalPipeServer<T>(ServerId, MaxNumberOfServerInstances);
 
